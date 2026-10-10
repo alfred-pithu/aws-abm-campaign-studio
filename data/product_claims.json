@@ -1,0 +1,37 @@
+[
+  {
+    "claim_id": "bedrock_001",
+    "product": "Amazon Bedrock",
+    "claim": "Amazon Bedrock provides access to foundation models through a managed service.",
+    "source": "AWS product documentation",
+    "approved": true
+  },
+  {
+    "claim_id": "bedrock_002",
+    "product": "Amazon Bedrock",
+    "claim": "Amazon Bedrock provides capabilities for building generative AI applications.",
+    "source": "AWS product documentation",
+    "approved": true
+  },
+  {
+    "claim_id": "bedrock_003",
+    "product": "Amazon Bedrock",
+    "claim": "Amazon Bedrock offers access to foundation models from multiple providers through a single API.",
+    "source": "AWS product documentation",
+    "approved": true
+  },
+  {
+    "claim_id": "bedrock_004",
+    "product": "Amazon Bedrock",
+    "claim": "Amazon Bedrock includes enterprise security and privacy controls for generative AI applications.",
+    "source": "AWS product documentation",
+    "approved": true
+  },
+  {
+    "claim_id": "bedrock_unapproved",
+    "product": "Amazon Bedrock",
+    "claim": "Amazon Bedrock guarantees a 90% reduction in model hosting cost.",
+    "source": "Unverified sales copy",
+    "approved": false
+  }
+]

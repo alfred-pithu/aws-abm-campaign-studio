@@ -1,0 +1,26 @@
+[
+  {
+    "asset_id": "asset_bedrock_hero",
+    "name": "Amazon Bedrock Hero",
+    "path": "assets/bedrock-hero.png",
+    "approved": true,
+    "allowed_channels": ["email"],
+    "description": "Amazon Bedrock campaign hero image"
+  },
+  {
+    "asset_id": "asset_aws_ai",
+    "name": "AWS AI",
+    "path": "assets/aws-ai.png",
+    "approved": true,
+    "allowed_channels": ["email"],
+    "description": "AWS AI capability visual for technical campaigns"
+  },
+  {
+    "asset_id": "asset_aws_logo",
+    "name": "AWS Logo Panel",
+    "path": "assets/aws-logo.png",
+    "approved": true,
+    "allowed_channels": ["email"],
+    "description": "AWS wordmark panel for email header treatments"
+  }
+]

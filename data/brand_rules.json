@@ -1,0 +1,24 @@
+{
+  "brand_name": "AWS",
+  "tone": [
+    "technical",
+    "clear",
+    "confident",
+    "practical"
+  ],
+  "avoid": [
+    "guaranteed",
+    "revolutionary",
+    "best in the world",
+    "magic",
+    "effortless"
+  ],
+  "writing_rules": [
+    "Prefer clear technical language.",
+    "Avoid excessive hype.",
+    "Do not make unsupported performance claims.",
+    "Keep CTAs direct.",
+    "Do not overuse exclamation marks."
+  ],
+  "cta_style": "direct and useful"
+}
