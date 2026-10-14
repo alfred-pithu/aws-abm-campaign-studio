@@ -8,6 +8,7 @@ from src.models.campaign import (
     WorkflowStatus,
 )
 from src.models.content import EmailContent
+from src.models.product import ProductProfile, ProductProfileDraft
 from src.models.validation import CheckStatus, ReviewResult, ValidationCheck, ValidationResult
 
 __all__ = [
@@ -19,6 +20,8 @@ __all__ = [
     "CheckStatus",
     "EmailContent",
     "ProductClaim",
+    "ProductProfile",
+    "ProductProfileDraft",
     "ReviewResult",
     "SelectedAsset",
     "ValidationCheck",

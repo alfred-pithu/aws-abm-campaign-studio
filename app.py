@@ -17,6 +17,7 @@ from src.graph.workflow import (
 )
 from src.models.campaign import WorkflowStatus
 from src.services.persistence import save_campaign
+from src.ui.products import render_products_page
 from src.ui.transcript import (
     ChatMessage,
     append_generate_messages,
@@ -71,6 +72,7 @@ def _init_state() -> None:
         "pending_action": None,
         "pending_text": "",
         "busy": False,
+        "product_draft": None,
     }
     for key, value in defaults.items():
         if key not in st.session_state:
@@ -117,8 +119,11 @@ def _queue_user_message(text: str) -> None:
 
 
 def _finish_error(result) -> None:
+    text = ERROR_TEXT
+    if result is not None and result.error_message:
+        text = result.error_message
     st.session_state.messages.append(
-        ChatMessage(role="assistant", kind="error", text=ERROR_TEXT)
+        ChatMessage(role="assistant", kind="error", text=text)
     )
     if result is not None:
         st.session_state.campaign = result
@@ -172,6 +177,26 @@ def _approve_and_publish() -> None:
         st.error(str(exc))
 
 
+def _start_revision() -> None:
+    st.session_state.awaiting_revision = True
+
+
+def _render_revision_form(form_key: str) -> None:
+    with st.form(form_key):
+        st.markdown("**What should I change?**")
+        feedback = st.text_area(
+            "Revision feedback",
+            placeholder="Make the tone less salesy and more technical.",
+            label_visibility="collapsed",
+        )
+        submitted = st.form_submit_button("Send revision", type="primary")
+    if submitted:
+        if not feedback.strip():
+            st.error("Tell me what to change first.")
+        else:
+            _queue_user_message(feedback.strip())
+
+
 def _render_review_actions(key_prefix: str) -> None:
     campaign = st.session_state.campaign
     validation_ok = bool(
@@ -191,16 +216,25 @@ def _render_review_actions(key_prefix: str) -> None:
         ):
             _approve_and_publish()
     with revise_col:
-        if st.button(
+        st.button(
             "Request changes",
             disabled=st.session_state.busy,
             key=f"{key_prefix}_revise",
             width="stretch",
-        ):
-            st.session_state.awaiting_revision = True
+            on_click=_start_revision,
+        )
+    if st.session_state.awaiting_revision:
+        _render_revision_form(f"revision_form_{key_prefix}")
 
 
 _init_state()
+page = st.radio("Section", ["Campaign", "Products"], horizontal=True)
+if page == "Products":
+    st.title("Product knowledge")
+    st.caption("Generate a draft, approve it, then promote that product in Campaign.")
+    render_products_page()
+    st.stop()
+
 campaign = st.session_state.campaign
 busy = bool(st.session_state.busy)
 published = (
@@ -231,31 +265,17 @@ with header_right:
             _reset_conversation()
             st.rerun()
 
-if in_review:
-    _render_review_actions("header")
+def _render_message_review_actions() -> None:
+    _render_review_actions("message")
 
-if in_review and st.session_state.awaiting_revision:
-    with st.form("revision_form"):
-        st.markdown("**What should I change?**")
-        feedback = st.text_area(
-            "Revision feedback",
-            placeholder="Make the tone less salesy and more technical.",
-            label_visibility="collapsed",
-        )
-        submitted = st.form_submit_button("Send revision", type="primary")
-    if submitted:
-        if not feedback.strip():
-            st.error("Tell me what to change first.")
-        else:
-            _queue_user_message(feedback.strip())
 
-render_messages(st.session_state.messages)
+render_messages(
+    st.session_state.messages,
+    after_status=_render_message_review_actions if in_review else None,
+)
 
 if st.session_state.pending_action in {"generate", "revision"}:
     _process_pending()
-
-if in_review:
-    _render_review_actions("thread")
 
 if campaign is not None and campaign.audit_events:
     with st.expander("Audit trail"):

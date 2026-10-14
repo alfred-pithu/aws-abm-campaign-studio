@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Literal
 
@@ -98,7 +99,7 @@ def append_generate_messages(messages: list[ChatMessage], state: WorkflowState) 
             kind="status",
             text=(
                 f"Status: `{state.workflow_status.value}`. "
-                "Approve above, request changes, or tell me what to change here."
+                "Approve below, request changes, or reply in the thread."
             ),
         )
     )
@@ -149,7 +150,7 @@ def append_revision_messages(
             kind="status",
             text=(
                 f"Status: `{state.workflow_status.value}`. "
-                "Approve above, request changes, or tell me what to change here."
+                "Approve below, request changes, or reply in the thread."
             ),
         )
     )
@@ -283,7 +284,19 @@ def _render_published(message: ChatMessage) -> None:
     st.caption("This is a POC publish. No real email was sent.")
 
 
-def render_messages(messages: list[ChatMessage]) -> None:
+def _last_status_index(messages: list[ChatMessage]) -> int | None:
+    index: int | None = None
+    for i, message in enumerate(messages):
+        if message.kind == "status":
+            index = i
+    return index
+
+
+def render_messages(
+    messages: list[ChatMessage],
+    *,
+    after_status: Callable[[], None] | None = None,
+) -> None:
     renderers = {
         "brief": _render_brief,
         "strategy": _render_strategy,
@@ -295,10 +308,13 @@ def render_messages(messages: list[ChatMessage]) -> None:
         "revision": _render_revision,
         "published": _render_published,
     }
-    for message in messages:
+    status_idx = _last_status_index(messages) if after_status else None
+    for i, message in enumerate(messages):
         with st.chat_message(message.role):
             renderer = renderers.get(message.kind)
             if renderer:
                 renderer(message)
             elif message.text:
                 st.markdown(message.text)
+            if after_status is not None and i == status_idx:
+                after_status()

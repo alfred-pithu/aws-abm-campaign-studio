@@ -34,11 +34,10 @@ def test_aws_bedrock_alias_matches_amazon_bedrock_claims():
         assert "bedrock_unapproved" not in ids
 
 
-def test_empty_claim_list_still_attaches_registry_ids():
+def test_empty_claim_list_does_not_steal_registry_ids():
     content = sample_content(claim_ids=[])
     updated = attach_approved_claim_ids(content, claims=[], required_ids=[])
-    assert updated.claim_ids
-    assert "bedrock_001" in updated.claim_ids
+    assert updated.claim_ids == []
 
 
 def test_empty_claim_ids_are_filled_from_required():

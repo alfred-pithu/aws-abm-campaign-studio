@@ -26,7 +26,7 @@ Human Approval
 Publish
 ```
 
-One product (Amazon Bedrock), one audience (CTOs at AI startups), one channel (email). Runnable locally with Streamlit.
+Amazon Bedrock is seeded. You can onboard another product from the Products page, approve it, then promote it in Campaign chat. One audience (CTOs), one channel (email). Runnable locally with Streamlit.
 
 ## Architecture
 
@@ -39,6 +39,8 @@ LangGraph generate
   Brief Agent → Strategy Agent → Content Agent → Asset Agent
         ↓
 Deterministic validators (no LLM)
+  If checks fail, auto-repair (scrub / targeted content regen, capped)
+  then validate again. The chat only shows the final result.
         ↓
 Review Agent (judgment signals)
         ↓
@@ -119,18 +121,22 @@ Do not commit `.env`. The interviewer will burn your OpenRouter credits when the
 
 ## Demo flow
 
-1. Open the application.
-2. Click **Send demo request**, or type the Amazon Bedrock / CTOs request in the composer.
-3. Read the thread: brief, strategy, draft copy, selected image, validation, AI review, then the email preview.
-4. Confirm status is **HUMAN_REVIEW**.
+1. Open the application. The top radio is **Campaign | Products**.
+2. Stay on **Campaign**. Click **Send demo request**, or type the Amazon Bedrock / CTOs request in the composer.
+3. Read the thread: brief, strategy, draft copy, selected image, validation, AI review, then the email preview. Failed checks (for example a forbidden word) are auto-repaired before this; the thread shows the **final** validation only. Repair attempts are in **Audit trail**. If repair still fails after the cap, approve stays blocked.
+4. Confirm status is **HUMAN_REVIEW**. Approve and request changes sit on that last bot message, not in the header.
 5. Click **Request changes** (or type in the composer): `Make the tone less salesy and more technical.`
 6. Confirm the bot says the revision target is **CONTENT**, reran content/validation/review, and skipped the rest.
 7. Confirm the preview updates in a new bubble.
 8. Click **Approve and publish** in the header.
 9. Confirm the thread shows campaign id, version, and Demo Marketer, and the composer is frozen.
 10. Open **Audit trail** at the bottom of the thread and walk the lifecycle.
-11. Optional: click **Start new conversation**, then `pytest tests/ -v`
+11. Switch to **Products**. Amazon Bedrock is already approved. Add a product with a name plus a URL and/or description, generate a profile, edit the draft, then **Approve product**. That appends `data/products.json` and `data/product_claims.json`.
+12. Back on **Campaign**, start a new conversation and type `Promote <name> to CTOs`. An unknown product stops generate and tells you to onboard it first.
+13. Optional: `pytest tests/ -v`
+
+Streamlit Cloud disk is ephemeral. Onboarding writes JSON on the app disk, so demo approve-and-promote locally if you need those files to stick.
 
 ## Not in this POC
 
-Slack, landing pages, four-audience matrix, DAM/CRM APIs, Brand Code YAML, product onboarding from URLs, vision QA, Docker/Kubernetes, authentication, real email send, vector search, FastAPI.
+Slack, landing pages, four-audience matrix, DAM/CRM APIs, Brand Code YAML, vision QA, Docker/Kubernetes, authentication, real email send, vector search, FastAPI, hosted product database.

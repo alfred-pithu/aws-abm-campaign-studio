@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     langchain_tracing_v2: bool = False
     langchain_api_key: str = ""
     langchain_project: str = "aws-abm-poc"
+    validation_repair_max_attempts: int = 3
 
     @property
     def data_dir(self) -> Path:

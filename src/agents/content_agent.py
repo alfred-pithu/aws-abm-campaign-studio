@@ -6,7 +6,6 @@ Must not: emit HTML, select assets, invent claims, or publish.
 
 from src.models.campaign import BrandRules, CampaignBrief, CampaignStrategy, ProductClaim
 from src.models.content import EmailContent
-from src.services.claims import load_claims
 from src.services.llm import generate_structured
 from src.services.validators import CTA_MAX, PREHEADER_MAX, SUBJECT_MAX
 
@@ -79,8 +78,6 @@ def attach_approved_claim_ids(
 ) -> EmailContent:
     """Keep only approved IDs. If the model omitted them, attach registry IDs."""
     allowed = [claim.claim_id for claim in claims if claim.approved]
-    if not allowed:
-        allowed = [claim.claim_id for claim in load_claims() if claim.approved]
     allowed_set = set(allowed)
     kept = [cid for cid in content.claim_ids if cid in allowed_set]
     if kept:

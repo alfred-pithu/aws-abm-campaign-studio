@@ -18,15 +18,23 @@ from src.agents.strategy_agent import build_strategy
 from src.config import get_settings
 from src.graph.state import WorkflowState, append_audit
 from src.models.campaign import CampaignBrief, WorkflowStatus
-from src.models.validation import CheckStatus
+from src.models.validation import CheckStatus, ValidationResult
 from src.services.claims import (
     approved_claims_for_product,
+    find_approved_product,
     load_assets,
     load_brand_rules,
     load_claims,
 )
 from src.services.llm import LLMError
 from src.services.renderer import render_email
+from src.services.validation_repair import (
+    apply_deterministic_content_fixes,
+    asset_only_failures,
+    content_failure_names,
+    failed_checks,
+    format_repair_feedback,
+)
 from src.services.validators import validate_campaign
 
 ALLOWED_TRANSITIONS: dict[WorkflowStatus, set[WorkflowStatus]] = {
@@ -112,9 +120,8 @@ def _apply_asset(state: WorkflowState, feedback: str | None = None) -> WorkflowS
     return append_audit(state, "ASSET_SELECTED", agent="asset_agent")
 
 
-def _validate_review_render(state: WorkflowState, include_review: bool) -> WorkflowState:
-    state = transition(state, WorkflowStatus.VALIDATING)
-    result = validate_campaign(
+def _validate_campaign(state: WorkflowState) -> ValidationResult:
+    return validate_campaign(
         content=state.content,
         selected_asset=state.selected_asset,
         claims=load_claims(),
@@ -122,6 +129,70 @@ def _validate_review_render(state: WorkflowState, include_review: bool) -> Workf
         brand_rules=load_brand_rules(),
         channel=state.campaign_brief.channel,
     )
+
+
+def _audit_repair(state: WorkflowState, attempt: int, failed_names: str, action: str) -> WorkflowState:
+    return append_audit(
+        state,
+        "VALIDATION_AUTO_REPAIR",
+        agent="validators",
+        details=f"attempt {attempt}; failed: {failed_names}; action: {action}",
+    )
+
+
+def _validate_review_render(state: WorkflowState, include_review: bool) -> WorkflowState:
+    state = transition(state, WorkflowStatus.VALIDATING)
+    max_attempts = get_settings().validation_repair_max_attempts
+    brand_rules = load_brand_rules()
+    llm_attempts = 0
+    asset_retried = False
+    result = _validate_campaign(state)
+
+    while not result.passed:
+        failed = failed_checks(result)
+        names = ",".join(check.check for check in failed)
+
+        if (
+            state.content is not None
+            and state.strategy is not None
+            and content_failure_names(failed)
+        ):
+            claims = approved_claims_for_product(state.campaign_brief.product)
+            original = state.content.model_dump()
+            fixed = apply_deterministic_content_fixes(
+                state.content, claims, state.strategy, brand_rules
+            )
+            if fixed.model_dump() != original:
+                state = state.model_copy(update={"content": fixed})
+                state = _audit_repair(state, llm_attempts, names, "deterministic")
+                result = _validate_campaign(state)
+                if result.passed:
+                    break
+                failed = failed_checks(result)
+                names = ",".join(check.check for check in failed)
+
+        if asset_only_failures(failed) and not asset_retried:
+            state = _apply_asset(
+                state, feedback=format_repair_feedback(failed, brand_rules)
+            )
+            state = _audit_repair(state, llm_attempts, names, "asset_reselect")
+            asset_retried = True
+            result = _validate_campaign(state)
+            continue
+
+        if content_failure_names(failed) and llm_attempts < max_attempts:
+            state = _apply_content(
+                state,
+                feedback=format_repair_feedback(failed, brand_rules),
+                regenerated=True,
+            )
+            llm_attempts += 1
+            state = _audit_repair(state, llm_attempts, names, "content_regen")
+            result = _validate_campaign(state)
+            continue
+
+        break
+
     state = state.model_copy(update={"validation_results": result})
     state = append_audit(state, "VALIDATION_COMPLETED", agent="validators")
     if include_review:
@@ -288,6 +359,18 @@ def _revision_graph():
 
 
 def run_generate(brief: CampaignBrief) -> WorkflowState:
+    product = find_approved_product(brief.product)
+    if product is None:
+        label = brief.product.strip() or "this product"
+        return WorkflowState(
+            campaign_brief=brief,
+            workflow_status=WorkflowStatus.DRAFT,
+            error_message=(
+                f"I don't have an approved profile for {label}. "
+                "Add it under Products first."
+            ),
+        )
+    brief = brief.model_copy(update={"product": product.name})
     state = WorkflowState(campaign_brief=brief, workflow_status=WorkflowStatus.DRAFT)
     state = append_audit(state, "CAMPAIGN_CREATED")
     state = transition(state, WorkflowStatus.GENERATING)

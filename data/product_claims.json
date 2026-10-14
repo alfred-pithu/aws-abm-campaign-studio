@@ -33,5 +33,61 @@
     "claim": "Amazon Bedrock guarantees a 90% reduction in model hosting cost.",
     "source": "Unverified sales copy",
     "approved": false
+  },
+  {
+    "claim_id": "amazon_s3_001",
+    "product": "Amazon S3",
+    "claim": "Amazon S3 provides scalable storage solutions for data.",
+    "source": "https://aws.amazon.com/s3",
+    "approved": true
+  },
+  {
+    "claim_id": "amazon_s3_002",
+    "product": "Amazon S3",
+    "claim": "Amazon S3 is suitable for various use cases including backup, archiving, and content distribution.",
+    "source": "https://aws.amazon.com/s3",
+    "approved": true
+  },
+  {
+    "claim_id": "amazon_s3_003",
+    "product": "Amazon S3",
+    "claim": "Amazon S3 offers high durability and availability for stored data.",
+    "source": "https://aws.amazon.com/s3",
+    "approved": true
+  },
+  {
+    "claim_id": "aws_lambda_001",
+    "product": "AWS Lambda",
+    "claim": "AWS Lambda allows you to run code without managing servers.",
+    "source": "AWS Lambda official description",
+    "approved": true
+  },
+  {
+    "claim_id": "aws_lambda_002",
+    "product": "AWS Lambda",
+    "claim": "AWS Lambda automatically scales applications in response to incoming traffic.",
+    "source": "AWS Lambda official description",
+    "approved": true
+  },
+  {
+    "claim_id": "aws_lambda_003",
+    "product": "AWS Lambda",
+    "claim": "AWS Lambda helps you to deploy apps without server overhead",
+    "source": "AWS marketer",
+    "approved": true
+  },
+  {
+    "claim_id": "aws_ecs_001",
+    "product": "AWS ECS",
+    "claim": "Amazon ECS enables users to run containers securely and at scale.",
+    "source": "marketer_description",
+    "approved": true
+  },
+  {
+    "claim_id": "aws_ecs_002",
+    "product": "AWS ECS",
+    "claim": "Amazon ECS integrates seamlessly with other AWS services.",
+    "source": "marketer_notes",
+    "approved": true
   }
 ]

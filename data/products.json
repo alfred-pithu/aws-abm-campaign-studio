@@ -1,0 +1,110 @@
+[
+  {
+    "product_id": "prod_amazon_bedrock",
+    "name": "Amazon Bedrock",
+    "short_description": "Managed service for building generative AI applications with foundation models.",
+    "category": "Generative AI",
+    "capabilities": [
+      "Access foundation models through a managed service",
+      "Build generative AI applications",
+      "Multiple model providers through a single API",
+      "Enterprise security and privacy controls"
+    ],
+    "target_audiences": [
+      "CTOs at AI startups",
+      "Engineering leaders"
+    ],
+    "use_cases": [
+      "Generative AI application development"
+    ],
+    "differentiators": [
+      "Managed foundation model access without hosting infrastructure"
+    ],
+    "source_url": "",
+    "status": "approved"
+  },
+  {
+    "product_id": "prod_amazon_s3",
+    "name": "Amazon S3",
+    "short_description": "Amazon S3 is a scalable storage service designed for data storage and management.",
+    "category": "Cloud Storage",
+    "capabilities": [
+      "Scalability",
+      "Durability",
+      "Data management"
+    ],
+    "target_audiences": [
+      "Businesses",
+      "Developers",
+      "Enterprises"
+    ],
+    "use_cases": [
+      "Data backup",
+      "Content distribution",
+      "Data archiving"
+    ],
+    "differentiators": [
+      "High durability and availability",
+      "Global infrastructure",
+      "Flexible pricing options"
+    ],
+    "source_url": "https://aws.amazon.com/s3",
+    "status": "approved"
+  },
+  {
+    "product_id": "prod_aws_lambda",
+    "name": "AWS Lambda",
+    "short_description": "AWS Lambda is a serverless computing service that allows you to run code without managing servers.",
+    "category": "Serverless Computing",
+    "capabilities": [
+      "Run code on demand",
+      "Scale automatically",
+      "Integrate with AWS services"
+    ],
+    "target_audiences": [
+      "Developers",
+      "DevOps teams",
+      "Businesses looking for scalable applications"
+    ],
+    "use_cases": [
+      "Event-driven applications",
+      "Microservices architecture",
+      "Data processing"
+    ],
+    "differentiators": [
+      "No server management required",
+      "Automatically scales based on request volume",
+      "Pay only for compute time consumed"
+    ],
+    "source_url": "https://aws.amazon.com/pm/lambda",
+    "status": "approved"
+  },
+  {
+    "product_id": "prod_aws_ecs",
+    "name": "AWS ECS",
+    "short_description": "Run highly secure, reliable, and scalable containers.",
+    "category": "Container Management Service",
+    "capabilities": [
+      "Container orchestration",
+      "Integration with other AWS services",
+      "Auto-scaling capabilities"
+    ],
+    "target_audiences": [
+      "Developers",
+      "DevOps teams",
+      "IT managers"
+    ],
+    "use_cases": [
+      "Microservices deployment",
+      "Batch processing",
+      "Web applications"
+    ],
+    "differentiators": [
+      "Integration with AWS ecosystem",
+      "Supports multiple container orchestration engines",
+      "Strong security features"
+    ],
+    "source_url": "https://aws.amazon.com/pm/ecs",
+    "status": "approved"
+  }
+]
