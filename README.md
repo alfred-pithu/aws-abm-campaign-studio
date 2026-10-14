@@ -98,6 +98,16 @@ OPENAI_BASE_URL=https://openrouter.ai/api/v1
 OPENAI_MODEL=openai/gpt-4o-mini
 ```
 
+LangSmith is optional. If `LANGCHAIN_TRACING_V2=true` and LangSmith credentials are set, traces are recorded. The app still runs if they are not.
+
+## Share a URL (Streamlit Community Cloud)
+
+This is the fastest way to send an interviewer a link.
+
+1. Put the repo on GitHub (public is easiest).
+2. Go to [https://share.streamlit.io](https://share.streamlit.io) and sign in with GitHub.
+3. Click **Create app** → pick this repo → main file `app.py`.
+4. In **Advanced settings → Secrets**, paste:
 
 ```toml
 OPENAI_API_KEY = "sk-or-..."
@@ -118,7 +128,7 @@ Do not commit `.env`. The interviewer will burn your OpenRouter credits when the
 5. Click **Request changes** (or type in the composer): `Make the tone less salesy and more technical.`
 6. Confirm the bot says the revision target is **CONTENT**, reran content/validation/review, and skipped the rest.
 7. Confirm the preview updates in a new bubble.
-8. Click **Approve and publish** in the header.
+8. Click **Approve and publish** on the last bot message.
 9. Confirm the thread shows campaign id, version, and Demo Marketer, and the composer is frozen.
 10. Open **Audit trail** at the bottom of the thread and walk the lifecycle.
 11. Switch to **Products**. Amazon Bedrock is already approved. Add a product with a name plus a URL and/or description, generate a profile, edit the draft, then **Approve product**. That appends `data/products.json` and `data/product_claims.json`.
