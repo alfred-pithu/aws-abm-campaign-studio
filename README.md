@@ -98,26 +98,7 @@ OPENAI_BASE_URL=https://openrouter.ai/api/v1
 OPENAI_MODEL=openai/gpt-4o-mini
 ```
 
-LangSmith is optional. If `LANGCHAIN_TRACING_V2=true` and LangSmith credentials are set, traces are recorded. The app still runs if they are not.
 
-## Share a URL (Streamlit Community Cloud)
-
-This is the fastest way to send an interviewer a link.
-
-1. Put the repo on GitHub (public is easiest).
-2. Go to [https://share.streamlit.io](https://share.streamlit.io) and sign in with GitHub.
-3. Click **Create app** → pick this repo → main file `app.py`.
-4. In **Advanced settings → Secrets**, paste:
-
-```toml
-OPENAI_API_KEY = "sk-or-..."
-OPENAI_BASE_URL = "https://openrouter.ai/api/v1"
-OPENAI_MODEL = "openai/gpt-4o-mini"
-```
-
-5. Deploy. The URL looks like `https://<app-name>-<you>.streamlit.app`.
-
-Do not commit `.env`. The interviewer will burn your OpenRouter credits when they click generate.
 
 ## Demo flow
 
